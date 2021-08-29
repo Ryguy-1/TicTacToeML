@@ -1,8 +1,9 @@
-
+from GameGenerator import Generator
 
 
 def main():
-    print("hi")
+    game_generator = Generator()
+
 
 if __name__ == '__main__':
     main()
