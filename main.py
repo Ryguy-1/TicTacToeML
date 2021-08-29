@@ -1,5 +1,5 @@
 from GameGenerator import Generator
-
+from NN import TrainData
 
 def main():
     game_generator = Generator()
