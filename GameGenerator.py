@@ -25,7 +25,7 @@ class GamePlayer:
                 # make the move and set the current board to the returned one
                 current_board = self.makeMove(current_board, available_move_squares[random_index_of_available_move_squares], is_black)
                 # add moves made and add board to boards seen
-                boards_seen.append(current_board.copy())
+                boards_seen.append(self.getBoardCopy(current_board))
                 # swap current player
                 is_black = not is_black
             elif win_state == 1:
@@ -40,6 +40,13 @@ class GamePlayer:
             return [boards_seen, [-1]]
         else:
             return [boards_seen, [0]]
+
+    def getBoardCopy(self, current_board):
+        copy_board = [[], [], []]
+        for row_idx in range(len(current_board)):
+            for item_idx in range(len(current_board[row_idx])):
+                copy_board[row_idx].append(current_board[row_idx][item_idx])
+        return copy_board
 
     def makeMove(self, current_board, place, is_black): # matrix goes in rows from top left, across, then down to next row (0-8)
         current_board_2 = current_board.copy()
@@ -107,15 +114,18 @@ class Generator:
     game_player = GamePlayer()
     completed_games = []  # this array ->
     # Games[Single Game([[Game Matrix], [Game Matrix]], [value])]
-    num_games = 100000
 
-    def __init__(self):
+    def __init__(self, num_games=1_000_000):
         print("Created Generator")
+        self.num_games = num_games
+
+        # Run Games
         for game_idx in range(self.num_games):
             self.completed_games.append(self.game_player.playGame())
-            if game_idx % 100 == 0:
+            if game_idx % 10000 == 0:
                 print(game_idx)
 
+        # Print First Game Sequence For Verification
         result1 = self.completed_games[0]
         for result in result1[0]:
             self.game_player.drawBoard(result)
