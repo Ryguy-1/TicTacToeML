@@ -40,7 +40,7 @@ class LinearNN(nn.Module):
         x = F.relu(self.lin3(x))
         x = F.relu(self.lin4(x))
         x = F.relu(self.lin5(x))
-        return x # Don't need softmax because just returning a single value
+        return x  # Don't need softmax because just returning a single value
 
 class CustomDataset(Dataset):
 
@@ -72,13 +72,31 @@ class CustomDataset(Dataset):
 
     def unwrap_games(self):
         for game in self.game_data:
-            if game[1][0] == 1:  # If it's a draw, don't include it as over time it should even out. -> Has lowest loss if draw and it predicts 1
-                continue
+            # if game[1][0] == 1:  # If it's a draw, don't include it as over time it should even out. -> Has lowest loss if draw and it predicts 1
+            #     continue
             for board in game[0]:
                 self.master_data.append((np.array(board).flatten(), np.array(game[1][0])))
 
+    def balance_master_data(self):  # Balance zero games with 1 games with 2 games
+        zero_list = []
+        one_list = []
+        two_list = []
+        for item in self.master_data:
+            board, label = item
+            if label == 0:
+                zero_list.append(item)
+            elif label == 1:
+                one_list.append(item)
+            elif label == 2:
+                two_list.append(item)
+        self.master_data.clear()
+        self.master_data.append(zero_list)
+        self.master_data.append(one_list[:len(zero_list)])  # zero list is always shorter than 1 and -1
+        self.master_data.append(two_list[:len(zero_list)])  # zero list is always shorter than 1 and -1
 
 class TrainData:
+
+    save_path = "model_with_ties.pth"
 
     def __init__(self, data, num_epochs=2, batch_size=512, learning_rate=0.000005):
         self.data = data
@@ -102,7 +120,8 @@ class TrainData:
             self.train(epoch)
             self.test()
 
-        # Print Results
+        # Save Model
+        torch.save(self.model, self.save_path)
 
     def train(self, epoch):
         for batch_index, (data, label) in enumerate(self.train_loader):
@@ -136,6 +155,4 @@ class TrainData:
 
         print('Accuracy of the network: %d %%' % (
                 100 * correct / total))
-
-
 
