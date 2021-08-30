@@ -116,19 +116,24 @@ class Generator:
     # Games[Single Game([[Game Matrix], [Game Matrix]], [value])]
 
     def __init__(self, num_games=1_000_000):
-        print("Created Generator")
         self.num_games = num_games
 
         # Run Games
         for game_idx in range(self.num_games):
             self.completed_games.append(self.game_player.playGame())
             if game_idx % 10000 == 0:
-                print(game_idx)
+                print(f'Games Ran: {game_idx}')
 
-        # Print First Game Sequence For Verification
-        result1 = self.completed_games[0]
-        for result in result1[0]:
+    def __len__(self):
+        return len(self.completed_games)
+
+    def getGameAtIndex(self, index):
+        return self.completed_games[index]
+
+    def printGame(self, game_data):
+        # Print Game
+        for result in game_data[0]:
             self.game_player.drawBoard(result)
             print()
             print("================================")
-        print(f"Result = {result1[1][0]}")
+        print(f"Result = {game_data[1][0]}")
