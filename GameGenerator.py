@@ -4,7 +4,7 @@ class GamePlayer:
 
     def __init__(self):
         pass
-        # Result of -1 is black, result of 1 is white
+        # Result of 0 is black, result of 2 is white, 1 is draw
 
     def playGame(self):
         boards_seen = []
@@ -29,17 +29,17 @@ class GamePlayer:
                 # swap current player
                 is_black = not is_black
             elif win_state == 1:
-                return [boards_seen, [1]]
+                return [boards_seen, [2]]
             elif win_state == -1:
-                return [boards_seen, [-1]]
+                return [boards_seen, [0]]
 
         win_state = self.hasWon(current_board)
         if win_state == 1:
-            return [boards_seen, [1]]
+            return [boards_seen, [2]]
         elif win_state == -1:
-            return [boards_seen, [-1]]
-        else:
             return [boards_seen, [0]]
+        else:
+            return [boards_seen, [1]]  # Draw
 
     def getBoardCopy(self, current_board):
         copy_board = [[], [], []]
@@ -123,6 +123,7 @@ class Generator:
             self.completed_games.append(self.game_player.playGame())
             if game_idx % 10000 == 0:
                 print(f'Games Ran: {game_idx}')
+        print(f'Games Ran: {game_idx+1}')
 
     def __len__(self):
         return len(self.completed_games)
