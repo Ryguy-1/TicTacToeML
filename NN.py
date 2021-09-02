@@ -1,5 +1,4 @@
 import glob
-import javaobj # For Reading Serialized Java Files
 import torch
 import torch.nn as nn
 import torchvision
@@ -40,7 +39,7 @@ class LinearNN(nn.Module):
         x = F.relu(self.lin3(x))
         x = F.relu(self.lin4(x))
         x = F.relu(self.lin5(x))
-        return x  # Don't need softmax because just returning a single value
+        return x  # Not using softmax -> faster learning
 
 class CustomDataset(Dataset):
 

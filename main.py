@@ -1,7 +1,6 @@
 from GameGenerator import Generator
 from NN import TrainData
 import glob
-import javaobj # For Reading Serialized Java Files
 import torch
 import torch.nn as nn
 import torchvision
@@ -18,11 +17,13 @@ import time
 from PIL import Image
 import keyboard
 import random
+from InputGamePlayer import InputGamePlayer
 
 device = torch.device("cpu")
 if torch.cuda.is_available():
     print(f'Switched to Cuda {torch.cuda_version}')
     device = torch.device("cuda")
+
 
 
 def main():
@@ -34,6 +35,7 @@ def main():
     testBoard([0, 0, 0,
                0, 0, 0,
                0, 0, 0])
+    playGame()
 
 
 def testBoard(board):  # Flattened Board
@@ -44,6 +46,10 @@ def testBoard(board):  # Flattened Board
     result = model(board_tensor)
     print(F.softmax(result))
 
+def playGame():
+    model = torch.load(TrainData.save_path)
+    model = model.to(device)
+    playGame = InputGamePlayer(model)
 
 if __name__ == '__main__':
     main()
